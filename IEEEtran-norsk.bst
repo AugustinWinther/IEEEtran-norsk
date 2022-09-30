@@ -102,6 +102,9 @@ FUNCTION {default.name.latex.cmd}{ "" }
 % The default URL prefix.
 FUNCTION {default.name.url.prefix}{ "[Online]. Hentet fra:" }
 
+% The default URLDATE prefix
+FUNCTION {default.name.urldate.prefix}{ "Lastet ned" }
+
 
 % Other controls that cannot be accessed via IEEEtranBSTCTL entry type.
 
@@ -249,6 +252,7 @@ ENTRY
     title
     type
     url
+    urldate
     volume
     year
     yearfiled
@@ -264,6 +268,7 @@ ENTRY
     CTLname_format_string
     CTLname_latex_cmd
     CTLname_url_prefix
+    CTLname_urldate_prefix
   }
   {}
   { label }
@@ -310,7 +315,8 @@ STRINGS { bibinfo
           ALTinterwordstretchfactor
           name.format.string
           name.latex.cmd
-          name.url.prefix}
+          name.url.prefix
+          name.urldate.prefix}
 
 
 
@@ -332,6 +338,7 @@ FUNCTION {initialize.controls}
   default.name.format.string 'name.format.string :=
   default.name.latex.cmd 'name.latex.cmd :=
   default.name.url.prefix 'name.url.prefix :=
+  default.name.urldate.prefix 'name.urldate.prefix :=
 }
 
 
@@ -1890,6 +1897,27 @@ FUNCTION {format.url}
   if$
 }
 
+%% URLDATE
+
+FUNCTION {format.urldate}
+{ is.use.url
+  { urldate empty$
+    { "" }
+    { this.to.prev.status
+      this.status.std
+      cap.yes  'status.cap :=
+      " (" name.urldate.prefix * " " * urldate * ")" *
+      punct.period 'this.status.punct :=
+	  %use this line if you want the url to have a period after it before the date accessed
+      %punct.period 'prev.status.punct :=
+	  space.normal 'this.status.space :=
+      quote.no 'this.status.quote :=
+  }
+  if$
+  }
+  {""}
+  if$
+}
 
 
 
@@ -1915,6 +1943,7 @@ FUNCTION {article}
   format.date "year" output.warn
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -1939,6 +1968,7 @@ FUNCTION {book}
   format.number output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -1956,6 +1986,7 @@ FUNCTION {booklet}
   format.date output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -1973,6 +2004,7 @@ FUNCTION {electronic}
   format.address "address" bibinfo.check output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   empty.entry.warn
   if.url.std.interword.spacing
@@ -1996,6 +2028,7 @@ FUNCTION {inbook}
   format.pages output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2017,6 +2050,7 @@ FUNCTION {incollection}
   format.pages output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2043,6 +2077,7 @@ FUNCTION {inproceedings}
   format.pages output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2060,6 +2095,7 @@ FUNCTION {manual}
   format.date output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2077,6 +2113,7 @@ FUNCTION {mastersthesis}
   format.date "year" output.warn
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2095,6 +2132,7 @@ FUNCTION {misc}
   format.date output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   empty.entry.warn
   if.url.std.interword.spacing
@@ -2111,6 +2149,7 @@ FUNCTION {patent}
   format.patent.date output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   empty.entry.warn
   if.url.std.interword.spacing
@@ -2130,6 +2169,7 @@ FUNCTION {periodical}
   format.date "year" output.warn
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2147,6 +2187,7 @@ FUNCTION {phdthesis}
   format.date "year" output.warn
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2169,6 +2210,7 @@ FUNCTION {proceedings}
   if$
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2186,6 +2228,7 @@ FUNCTION {standard}
   format.date output
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2204,6 +2247,7 @@ FUNCTION {techreport}
   format.date "year" output.warn
   format.note output
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2218,6 +2262,7 @@ FUNCTION {unpublished}
   format.date output
   format.note "note" output.warn
   format.url output
+  format.urldate output
   fin.entry
   if.url.std.interword.spacing
 }
@@ -2255,6 +2300,14 @@ FUNCTION {IEEEtranBSTCTL}
       yes.no.to.int
       'is.use.url :=
     }
+%  TODO figure out a way to add in this control without exceeding the function length limit
+%  CTLname_urldate_prefix
+%  missing$
+%    { skip$ }
+%    { CTLname_urldate_prefix
+%      'name.urldate.prefix :=
+%    }
+%  if$
   if$
   CTLuse_forced_etal
   empty$
